@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { configDefaults } from 'vitest/config';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
 export default defineConfig({
@@ -10,6 +11,6 @@ export default defineConfig({
     cssCodeSplit: false,
     chunkSizeWarningLimit: 4000,
   },
-  // The maths is pure, so tests run in plain Node.
-  test: { environment: 'node' },
+  // The maths is pure, so tests run in plain Node. Skip .claude/, where nested git worktrees live.
+  test: { environment: 'node', exclude: [...configDefaults.exclude, '.claude/**'] },
 });
