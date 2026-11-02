@@ -5,8 +5,7 @@
 // mode, string and number in src/ is then compared with the original, so an accidental edit to a
 // name, a default, an error message, a vertex or a triangle shows up here.
 //
-// At this point the port is identical to the prototype. The two corrected defaults of
-// decisions.md Q-1 are the only differences that will ever be allowed.
+// The only differences allowed are the two corrected defaults (decisions.md Q-1, D-017).
 //
 // This file skips itself if the reference is not on disk. Remove it, or replace it with a
 // snapshot, once v1.0 has shipped and the reference is retired.
@@ -123,8 +122,11 @@ const SECOND_DIMS = {
   cylinder: { r: 1.5, h: 6 },
 };
 
-// Defaults corrected on purpose, as shape:modeIndex:inputKey. None yet.
-const KNOWN_FIXES = {};
+// The two defaults that were corrected on purpose: shape:modeIndex:inputKey.
+const KNOWN_FIXES = {
+  'rectpyramid:2:e': { was: 8.73, now: 7.63 },
+  'cone:4:t': { was: 60.3, now: 60.26 },
+};
 
 const product = (lists) =>
   lists.reduce((acc, list) => acc.flatMap((prefix) => list.map((v) => [...prefix, v])), [[]]);
@@ -238,14 +240,17 @@ describe.skipIf(!hasReference)('parity with reference/solid-explorer.html', () =
       expect(MODES[shapeKey][idx].extra).toEqual(refMode.extra);
     });
 
-    it('differs from the reference in nothing', () => {
+    it('differs from the reference in exactly the two corrected defaults, and nothing else', () => {
       const differences = ALL_MODES.flatMap(({ shapeKey, idx, refMode }) =>
         refMode.inputs.flatMap(([k, , def], i) => {
           const now = MODES[shapeKey][idx].inputs[i][2];
           return now === def ? [] : [{ at: `${shapeKey}:${idx}:${k}`, was: def, now }];
         }),
       );
-      expect(differences).toEqual([]);
+      expect(differences).toEqual([
+        { at: 'rectpyramid:2:e', was: 8.73, now: 7.63 },
+        { at: 'cone:4:t', was: 60.3, now: 60.26 },
+      ]);
       expect(Object.keys(KNOWN_FIXES)).toEqual(differences.map((d) => d.at));
     });
 
@@ -279,6 +284,34 @@ describe.skipIf(!hasReference)('parity with reference/solid-explorer.html', () =
         expect(mismatches.slice(0, 3)).toEqual([]);
       },
     );
+
+    it('rectangular pyramid "Base and slant edge": same sums, different starting value', () => {
+      const refMode = ref.MODES.rectpyramid[2];
+      const mode = MODES.rectpyramid[2];
+      const refDefaults = defaultsOf(refMode.inputs);
+      const newDefaults = defaultsOf(mode.inputs);
+      expect(refDefaults).toEqual({ l: 8, w: 5, e: 8.73 });
+      expect(newDefaults).toEqual({ l: 8, w: 5, e: 7.63 });
+      // At the reference value the two agree, and both give the wrong height.
+      expect(mode.toCanon(refDefaults)).toEqual(refMode.toCanon(refDefaults));
+      expect(refMode.toCanon(refDefaults).h).toBeCloseTo(7.3459, 4);
+      // At the new value the height is the canonical 6, to within 0.01.
+      expect(Math.abs(mode.toCanon(newDefaults).h - 6)).toBeLessThanOrEqual(0.01);
+      expect(mode.toCanon(newDefaults)).toEqual(refMode.toCanon(newDefaults));
+    });
+
+    it('cone "Radius and angle at the base": same sums, different starting value', () => {
+      const refMode = ref.MODES.cone[4];
+      const mode = MODES.cone[4];
+      const refDefaults = defaultsOf(refMode.inputs);
+      const newDefaults = defaultsOf(mode.inputs);
+      expect(refDefaults).toEqual({ r: 4, t: 60.3 });
+      expect(newDefaults).toEqual({ r: 4, t: 60.26 });
+      expect(mode.toCanon(refDefaults)).toEqual(refMode.toCanon(refDefaults));
+      expect(Math.abs(refMode.toCanon(refDefaults).h - 7)).toBeGreaterThan(0.01);
+      expect(Math.abs(mode.toCanon(newDefaults).h - 7)).toBeLessThanOrEqual(0.01);
+      expect(mode.toCanon(newDefaults)).toEqual(refMode.toCanon(newDefaults));
+    });
   });
 
   describe('formatting', () => {

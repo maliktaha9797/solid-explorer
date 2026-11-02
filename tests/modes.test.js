@@ -5,6 +5,8 @@ import { SHAPES } from '../src/shapes/index.js';
 const defaultsOf = (inputs) => Object.fromEntries(inputs.map(([k, , d]) => [k, d]));
 const canonOf = (shapeKey) => defaultsOf(SHAPES[shapeKey].dims);
 const run = (shapeKey, modeIdx, values) => MODES[shapeKey][modeIdx].toCanon(values);
+const inputDefault = (shapeKey, modeIdx, key) =>
+  MODES[shapeKey][modeIdx].inputs.find(([k]) => k === key)[2];
 
 const ALL_MODES = Object.entries(MODES).flatMap(([shapeKey, modes]) =>
   modes.map((mode, idx) => ({ shapeKey, idx, mode, label: `${shapeKey}: ${mode.name}` })),
@@ -116,23 +118,49 @@ describe('the first mode of each shape is the canonical one', () => {
   });
 });
 
-// decisions.md Q-1: two prototype defaults break the 0.01 rule until they are corrected.
-const KNOWN_INCONSISTENT = ['rectpyramid:2', 'cone:4'];
-
 describe('defaults are consistent', () => {
-  it.each(
-    ALL_MODES.filter(({ shapeKey, idx }) => !KNOWN_INCONSISTENT.includes(`${shapeKey}:${idx}`)),
-  )('$label: defaults reproduce the canonical defaults within 0.01', ({ shapeKey, mode }) => {
-    const canon = canonOf(shapeKey);
-    const res = mode.toCanon(defaultsOf(mode.inputs));
-    expect(res.error).toBeUndefined();
-    expect(Object.keys(res).sort()).toEqual(Object.keys(canon).sort());
-    for (const k of Object.keys(canon)) {
-      expect(
-        Math.abs(res[k] - canon[k]),
-        `${k}: ${res[k]} against ${canon[k]}`,
-      ).toBeLessThanOrEqual(0.01);
-    }
+  it.each(ALL_MODES)(
+    '$label: defaults reproduce the canonical defaults within 0.01',
+    ({ shapeKey, mode }) => {
+      const canon = canonOf(shapeKey);
+      const res = mode.toCanon(defaultsOf(mode.inputs));
+      expect(res.error).toBeUndefined();
+      expect(Object.keys(res).sort()).toEqual(Object.keys(canon).sort());
+      for (const k of Object.keys(canon)) {
+        expect(
+          Math.abs(res[k] - canon[k]),
+          `${k}: ${res[k]} against ${canon[k]}`,
+        ).toBeLessThanOrEqual(0.01);
+      }
+    },
+  );
+});
+
+describe('the two corrected defaults (decisions.md Q-1, D-017)', () => {
+  it('rectangular pyramid "Base and slant edge" now defaults to e = 7.63', () => {
+    expect(MODES.rectpyramid[2].name).toBe('Base and slant edge');
+    expect(inputDefault('rectpyramid', 2, 'e')).toBe(7.63);
+    const res = run('rectpyramid', 2, defaultsOf(MODES.rectpyramid[2].inputs));
+    expect(res.l).toBe(8);
+    expect(res.w).toBe(5);
+    expect(res.h).toBeCloseTo(5.9972, 4);
+  });
+
+  it('cone "Radius and angle at the base" now defaults to t = 60.26', () => {
+    expect(MODES.cone[4].name).toBe('Radius and angle at the base');
+    expect(inputDefault('cone', 4, 't')).toBe(60.26);
+    const res = run('cone', 4, defaultsOf(MODES.cone[4].inputs));
+    expect(res.r).toBe(4);
+    expect(res.h).toBeCloseTo(7.0014, 4);
+  });
+
+  it('the old values would have failed the 0.01 rule', () => {
+    const oldRect = run('rectpyramid', 2, { l: 8, w: 5, e: 8.73 });
+    expect(oldRect.h).toBeCloseTo(7.3459, 4);
+    expect(Math.abs(oldRect.h - 6)).toBeGreaterThan(0.01);
+    const oldCone = run('cone', 4, { r: 4, t: 60.3 });
+    expect(oldCone.h).toBeCloseTo(7.0127, 4);
+    expect(Math.abs(oldCone.h - 7)).toBeGreaterThan(0.01);
   });
 });
 
