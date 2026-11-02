@@ -6,8 +6,8 @@
  * dist/index.html. Files in public/ are not inlined, which would break the single-file download.
  *
  * The page font stack is: "Manrope", "Segoe UI", system-ui, sans-serif
- * It is applied by the body rule when the stylesheets are split in Phase 4,
- * which also adds the :root light and dark tokens to this file.
+ * It is applied by the body rule in layout.css. The :root light and dark tokens follow the
+ * font faces in this file, moved verbatim from the reference.
  */
 
 @font-face {
@@ -108,4 +108,59 @@
   font-weight: 800;
   src: url('./fonts/manrope-greek-800-normal.woff2') format('woff2');
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+/* ---------- Tokens: light, dark by system setting, dark by choice ---------- */
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+  --bg: #eef1f5;
+  --grid: rgba(27, 39, 51, 0.07);
+  --surface: #ffffff;
+  --surface-2: #f3f5f8;
+  --surface-3: #e8ecf1;
+  --ink: #1b2733;
+  --ink-2: #4a5a6a;
+  --ink-3: #8795a3;
+  --line: #dbe1e8;
+  --line-2: #c8d0d9;
+  --accent: #ee8a2f;
+  --accent-soft: rgba(238, 138, 47, 0.14);
+  --teal: #0d9b96;
+  --teal-soft: rgba(13, 155, 150, 0.14);
+  --blue: #3b7dd8;
+  --focus: #3b7dd8;
+  --shadow: 0 1px 2px rgba(27,39,51,.06), 0 10px 30px rgba(27,39,51,.10);
+  --pw: 380px;
+  --tb: 52px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f151b; --grid: rgba(230,236,242,.055);
+    --surface: #171f27; --surface-2: #1d2731; --surface-3: #25313d;
+    --ink: #e7edf3; --ink-2: #aab7c3; --ink-3: #6f7f8f;
+    --line: #273340; --line-2: #33414f;
+    --accent: #f49a47; --accent-soft: rgba(244,154,71,.18);
+    --teal: #2fc1bb; --teal-soft: rgba(47,193,187,.16);
+    --blue: #6aa3f0; --focus: #6aa3f0;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 30px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f151b; --grid: rgba(230,236,242,.055);
+  --surface: #171f27; --surface-2: #1d2731; --surface-3: #25313d;
+  --ink: #e7edf3; --ink-2: #aab7c3; --ink-3: #6f7f8f;
+  --line: #273340; --line-2: #33414f;
+  --accent: #f49a47; --accent-soft: rgba(244,154,71,.18);
+  --teal: #2fc1bb; --teal-soft: rgba(47,193,187,.16);
+  --blue: #6aa3f0; --focus: #6aa3f0;
+  --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 30px rgba(0,0,0,.45);
+}
+
+@media (max-width: 860px) {
+  :root { --tb: 48px; }
 }

@@ -1,0 +1,63 @@
+/* ---------- Stage: canvas, labels, status bar, legend, panel handle ---------- */
+.stage {
+  position: relative; min-height: 0; overflow: hidden;
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+canvas#c { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+canvas#c.grabbing { cursor: grabbing; }
+canvas#c.pick { cursor: pointer; }
+.labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.lbl {
+  position: absolute; transform: translate(-50%, -50%); white-space: nowrap;
+  font-weight: 800; font-size: 14px; color: var(--ink);
+  text-shadow: 0 0 3px var(--bg), 0 0 6px var(--bg), 0 0 10px var(--bg);
+}
+.lbl.dim, .lbl.len {
+  font-size: 12px; font-weight: 700; color: var(--teal); text-shadow: none;
+  background: var(--surface); border: 1px solid var(--line); padding: 2px 7px; border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.lbl.len { background: var(--teal); color: #fff; border-color: var(--teal); }
+.lbl.hot { color: var(--accent); font-size: 16px; }
+.lbl.theta { color: var(--accent); font-size: 17px; font-style: italic; font-family: Georgia, serif; }
+.tip {
+  position: absolute; pointer-events: none; transform: translate(14px, 14px);
+  background: var(--ink); color: var(--surface); font-size: 12px; font-weight: 700;
+  padding: 5px 9px; border-radius: 6px; display: none; white-space: nowrap; z-index: 3;
+}
+.status {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 30px;
+  display: flex; align-items: center; gap: 14px; padding: 0 14px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-2); font-weight: 600;
+}
+.status .k { color: var(--ink-3); font-weight: 700; }
+.status .hintkeys { margin-left: auto; color: var(--ink-3); }
+kbd { font: inherit; font-size: 11px; background: var(--surface-3); border: 1px solid var(--line-2); border-radius: 4px; padding: 0 5px; }
+.legend {
+  position: absolute; left: 14px; top: 14px; display: flex; gap: 10px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent); border: 1px solid var(--line);
+  border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 600; color: var(--ink-2);
+}
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.edge-toggle {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 64px; border: 1px solid var(--line); border-right: 0; border-radius: 10px 0 0 10px;
+  background: var(--surface); color: var(--ink-2); display: grid; place-items: center; z-index: 4;
+  box-shadow: -2px 0 10px rgba(0,0,0,.08);
+}
+.edge-toggle:hover { color: var(--ink); background: var(--surface-2); }
+.edge-toggle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s; }
+.work.collapsed .edge-toggle svg { transform: rotate(180deg); }
+.err { color: #d6453d; font-size: 12.5px; font-weight: 600; margin-top: 8px; display: none; }
+.err.show { display: block; }
+.lbl.dim.derived { border-style: dashed; color: var(--ink-2); }
+.lbl.dim.given { border-color: var(--teal); }
+
+@media (max-width: 860px) {
+  .status .hintkeys, .legend { display: none; }
+  .edge-toggle { right: auto; left: 50%; top: auto; bottom: 30px; transform: translateX(-50%); width: 72px; height: 24px; border: 1px solid var(--line); border-bottom: 0; border-radius: 10px 10px 0 0; box-shadow: 0 -2px 10px rgba(0,0,0,.08); }
+  .edge-toggle svg { transform: rotate(90deg); }
+  .work.collapsed .edge-toggle svg { transform: rotate(-90deg); }
+}

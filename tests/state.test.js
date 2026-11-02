@@ -17,6 +17,16 @@ describe('createState defaults', () => {
     expect(s.dimVals).toEqual({});
   });
 
+  it('holds the fields the prototype kept outside its state', () => {
+    const s = createState().get();
+    expect(s.lastGood).toBeNull();
+    expect(s.dimError).toBeNull();
+    expect(s.tab).toBe('shape');
+    expect(s.systemDark).toBe(false);
+    expect(s.view).toBe('iso');
+    expect(s.dragTool).toBe('rotate');
+  });
+
   it('has every toggle on except hide answers', () => {
     expect(createState().get().toggles).toEqual({
       dims: true,
@@ -108,5 +118,45 @@ describe('subscribe', () => {
     });
     s.set({ shapeKey: 'cylinder' });
     expect(seen).toBe('cylinder');
+  });
+});
+
+describe('toggleEdge', () => {
+  it('adds a line, then removes it again', () => {
+    const s = createState();
+    s.toggleEdge('AB');
+    expect([...s.get().hiEdges]).toEqual(['AB']);
+    s.toggleEdge('AB');
+    expect(s.get().hiEdges.size).toBe(0);
+  });
+
+  it('replaces the Set instead of mutating it, so subscribers can compare by reference', () => {
+    const s = createState();
+    const before = s.get().hiEdges;
+    s.toggleEdge('AB');
+    expect(s.get().hiEdges).not.toBe(before);
+    expect(before.size).toBe(0);
+  });
+
+  it('notifies subscribers once, with hiEdges as the changed key', () => {
+    const s = createState();
+    const fn = vi.fn();
+    s.subscribe(fn);
+    s.toggleEdge('CD');
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(fn.mock.calls[0][1]).toEqual(['hiEdges']);
+  });
+});
+
+describe('clearSelection', () => {
+  it('clears the selected lines and the triangle together, and nothing else', () => {
+    const s = createState({ triIdx: 2, hiEdges: new Set(['AB', 'AC']), renames: { A: 'P' } });
+    const fn = vi.fn();
+    s.subscribe(fn);
+    s.clearSelection();
+    expect(s.get().triIdx).toBe(-1);
+    expect(s.get().hiEdges.size).toBe(0);
+    expect(s.get().renames).toEqual({ A: 'P' });
+    expect(fn).toHaveBeenCalledTimes(1);
   });
 });
