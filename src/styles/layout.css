@@ -1,0 +1,23 @@
+/* Page shell and workspace grid. */
+html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0; height: 100%; overflow: hidden;
+  font-family: "Manrope", "Segoe UI", system-ui, sans-serif;
+  font-size: 14px; color: var(--ink); background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+*, *::before, *::after { box-sizing: inherit; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.app { height: 100%; display: grid; grid-template-rows: var(--tb) 1fr; }
+
+/* ---------- Workspace ---------- */
+.work { display: grid; grid-template-columns: minmax(0,1fr) var(--pw); min-height: 0; transition: grid-template-columns .28s cubic-bezier(.4,0,.2,1); }
+.work.collapsed { grid-template-columns: minmax(0,1fr) 0px; }
+
+@media (max-width: 860px) {
+  .work { grid-template-columns: 1fr; grid-template-rows: minmax(0,1fr) 52vh; transition: grid-template-rows .28s cubic-bezier(.4,0,.2,1); }
+  .work.collapsed { grid-template-columns: 1fr; grid-template-rows: minmax(0,1fr) 0px; }
+}
