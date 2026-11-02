@@ -8,6 +8,11 @@ package-lock.json
 # Phase 4 (ui-engineer) decides whether to start formatting it.
 index.html
 
+# Stylesheets are moved verbatim from the reference. Prettier rewrites custom property text
+# (rgba(230,236,242,.055) to rgba(230, 236, 242, 0.055)), which changes the parsed rules, so the
+# split is kept byte-for-byte until the parity gate has passed. Tested in Phase 4 (decisions D-032).
+src/styles/*.css
+
 # Pre-repo originals and the Claude Code system (hand-formatted tables)
 solid-explorer.html
 SOLID_EXPLORER_REPO_PLAN.md
