@@ -1,0 +1,15 @@
+# Never reformat the spec or build output
+reference/
+dist/
+node_modules/
+package-lock.json
+
+# Shell markup is copied verbatim from the reference; Prettier rewrites inline styles.
+# Phase 4 (ui-engineer) decides whether to start formatting it.
+index.html
+
+# Pre-repo originals and the Claude Code system (hand-formatted tables)
+solid-explorer.html
+SOLID_EXPLORER_REPO_PLAN.md
+.claude/
+CLAUDE.md
