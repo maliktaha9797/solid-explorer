@@ -1,0 +1,61 @@
+name: New shape
+description: Suggest a solid to add
+title: 'New shape: '
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a shape. The more you can say about how a textbook treats it, the easier it is to build.
+
+        How a shape is built is in [the guide to adding a shape](https://github.com/maliktaha9797/solid-explorer/blob/main/docs/adding-a-shape.md). You do not need to read it to suggest one.
+  - type: input
+    id: name
+    attributes:
+      label: Which solid?
+      description: For example, hemisphere, wedge, or square-based prism.
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: What are its surfaces like?
+      description: A solid with a curved surface needs a change to the 3D view as well, so it takes longer.
+      options:
+        - Flat faces only
+        - It has a curved surface
+        - I am not sure
+    validations:
+      required: true
+  - type: textarea
+    id: lengths
+    attributes:
+      label: Which lengths and angles do textbooks give for it?
+      description: Each way a question can describe the solid is one "Define by" mode. List the ones you know, and the sizes you would start with.
+      placeholder: |
+        - Base side, top side and height
+        - Base side, top side and slant height
+    validations:
+      required: true
+  - type: textarea
+    id: triangles
+    attributes:
+      label: Which right-angled triangles would a student look for?
+      description: Name the corners as the textbook does, which lines they join, and where the right angle is. A sketch is fine.
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: An example question
+      description: Optional. A typical textbook question about this solid, with its answer.
+  - type: dropdown
+    id: help
+    attributes:
+      label: Would you like to build it?
+      options:
+        - Yes, I would like to try
+        - I could help test it
+        - No, I am only suggesting it
+    validations:
+      required: true

@@ -1,0 +1,69 @@
+name: Bug report
+description: Something looks wrong or does not work as it should
+title: 'Bug: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for telling us. A clear report is the fastest way to a fix.
+
+        Solid Explorer has only been tested in Chrome, with emulated touch. Reports from Safari, Firefox, phones and tablets are very welcome.
+  - type: dropdown
+    id: how
+    attributes:
+      label: How are you using Solid Explorer?
+      options:
+        - The live site
+        - The downloaded solid-explorer-<version>.html file
+        - Running it from the code (npm run dev)
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      description: For example, Chrome 156 on macOS, or Safari on an iPad.
+    validations:
+      required: true
+  - type: input
+    id: screen
+    attributes:
+      label: Device and screen size
+      description: A computer, phone or tablet, and roughly how wide the window is.
+  - type: input
+    id: shape
+    attributes:
+      label: Which shape and "Define by" mode?
+      description: For example, Cone, "Radius and slant height". Leave blank if it does not matter.
+  - type: textarea
+    id: steps
+    attributes:
+      label: What did you do?
+      description: The steps, one at a time, with the numbers you typed.
+      placeholder: |
+        1. Pick Square pyramid.
+        2. Choose "Base and slant height".
+        3. Type 6 and 2.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+      description: A screenshot helps. You can paste or drag it in.
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Anything in the browser console?
+      description: Optional. Open the developer tools, look at the Console tab, and paste any red messages.
+      render: text
