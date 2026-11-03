@@ -43,7 +43,7 @@ Open the address it prints. `npm run build` makes the single file, at `dist/inde
 - **Seven solids:** cuboid, cube, square pyramid, rectangular pyramid, triangular prism, cone and cylinder.
 - **27 ways to define them.** The **Define by** menu matches the way a textbook gives the lengths. A cuboid can be set by its length, width and space diagonal. A cone can be set by its radius and slant height. A square pyramid can be set by its base and the angle of its faces. If the lengths cannot make a solid, a message says what must be true, and the last good solid stays on screen.
 - **Lengths, in your units:** centimetres, millimetres, metres, or plain units. Numbers you type show as solid labels on the model. Numbers the app works out show as dashed labels.
-- **Corner letters you choose.** Rename the corners to match your textbook, and every title, note, label and line of working follows.
+- **Corner letters you choose.** Rename the corners to match your textbook, and the labels on the model, the triangle titles and notes, and every line of working follow. The field names in the **Define by** section, such as "Slant height VP", keep the original letters.
 - **Pick any edge or diagonal,** by clicking it on the model or from the lists. Hover over a line to see its length.
 - **20 right-angled triangles** across the seven solids. Pick one and it is shaded inside the solid, with the right angle marked and the angle you are finding labelled θ. The **Working** tab flattens it and shows the steps: Pythagoras for the side, then the angle with tan⁻¹, then a check with sin and cos.
 - **Hide answers for practice.** Every answer in the working becomes a `?`, including the ones inside √ and tan⁻¹. Students do the sum, then you switch it off to check.
