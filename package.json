@@ -1,11 +1,19 @@
 {
   "name": "solid-explorer",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Pythagoras' theorem and trigonometry in 3D solids. A browser-based teaching tool.",
   "type": "module",
   "license": "MIT",
   "author": "Taha Malik",
+  "homepage": "https://maliktaha9797.github.io/solid-explorer/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maliktaha9797/solid-explorer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/maliktaha9797/solid-explorer/issues"
+  },
   "engines": {
     "node": ">=22.13"
   },

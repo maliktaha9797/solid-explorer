@@ -7,6 +7,8 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-04
+
 ### Added
 
 - **Solid Explorer, version 1.0.** A teaching tool for Pythagoras' theorem and trigonometry in 3D
