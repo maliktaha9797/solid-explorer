@@ -1,7 +1,7 @@
 // Single source of app state, with pub/sub. Imports nothing and touches no DOM.
 // All UI modules and the scene read this and subscribe to it; none reaches into another's DOM.
 //
-// Contract (decisions.md P-2):
+// Contract:
 //   get()          the current state object. Treat it as read-only.
 //   set(patch)     shallow-merge the patch, then notify every subscriber synchronously.
 //   subscribe(fn)  fn(state, changedKeys) runs after every set(). Returns an unsubscribe function.

@@ -19,7 +19,7 @@
 
 ## Parity checklist items touched
 
-The checklist is [`.claude/skills/parity-checklist.md`](https://github.com/maliktaha9797/solid-explorer/blob/main/.claude/skills/parity-checklist.md). List each item your change could affect, say which build you ran it on (`npm run dev`, `dist/index.html` from disk, or both), the browser and the width, and what you saw. An item is only green if you saw it working.
+The checklist is [`docs/parity-checklist.md`](https://github.com/maliktaha9797/solid-explorer/blob/main/docs/parity-checklist.md). List each item your change could affect, say which build you ran it on (`npm run dev`, `dist/index.html` from disk, or both), the browser and the width, and what you saw. An item is only green if you saw it working.
 
 If your change touches no behaviour, for example a change to the docs, write "none".
 

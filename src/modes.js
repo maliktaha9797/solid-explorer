@@ -11,7 +11,7 @@
 // The first mode of every shape is the canonical one: its input keys are the shape's dims keys.
 // Every mode's defaults must reproduce the canonical defaults to within 0.01 (tests/modes.test.js).
 //
-// Two defaults differ from the prototype, on purpose (decisions.md D-017, CHANGELOG.md):
+// Two defaults differ from the prototype, on purpose (see CHANGELOG.md):
 //   rectpyramid "Base and slant edge": e is 7.63, the prototype had 8.73 (height 7.35, not 6)
 //   cone "Radius and angle at the base": t is 60.26, the prototype had 60.3 (height 7.0127, not 7)
 

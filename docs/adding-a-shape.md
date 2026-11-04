@@ -58,7 +58,7 @@ Each entry is `{ title, pts, note }`. **The right angle is always at `pts[1]`, a
 
 If you list the points in the order that reads best in the title, the picture and the sums go wrong. Choose `pts` by the rule, then write the title.
 
-In titles and notes, write vertex letters in square brackets: `Slant height [JF]`. The app swaps in the student's own letters when they rename corners, and drops the brackets. A bare letter does not follow a rename. Write in the voice of `.claude/skills/teaching-copy.md`: short sentences, British spelling, and say where a length came from when an earlier triangle found it.
+In titles and notes, write vertex letters in square brackets: `Slant height [JF]`. The app swaps in the student's own letters when they rename corners, and drops the brackets. A bare letter does not follow a rename. Write in the voice described under "Writing" in [CONTRIBUTING.md](../CONTRIBUTING.md#writing): short sentences, British spelling, and say where a length came from when an earlier triangle found it.
 
 Triangles build on each other, so the order matters. The frustum's second note says "`[JF]` comes from the first triangle".
 
@@ -299,7 +299,7 @@ const other = OTHER[shapeKey] ?? Object.fromEntries(first.inputs.map(([k], i) =>
 
 `tests/persistence.test.js` has two tests that use `'frustum'` as an example of a saved shape name that does not exist. Once it does exist they fail. Change that word to another, such as `'pentagon'`. This is a quirk of the frustum, not of every new shape.
 
-`tests/reference-parity.test.js` compares the shapes and modes with the original prototype at test time, so it fails on any new shape by design. Before your first new shape or mode, retire it or turn it into a snapshot. See decision D-021 in `.claude/context/decisions.md`.
+`tests/reference-parity.test.js` compares the shapes and modes with the original prototype at test time, so it fails on any new shape by design. Before your first new shape or mode, retire it or turn it into a snapshot. The comment at the top of that file says what it does.
 
 Then run `npm test`.
 
@@ -318,7 +318,7 @@ Pick **Square frustum** in the Shape menu. You should see:
 
 Rename `J` to another letter in Corner letters, and check that the titles, notes, labels and working all follow.
 
-Then run `npm run check`, and the parts of the parity checklist (`.claude/skills/parity-checklist.md`) for shapes and selection.
+Then run `npm run check`, and the parts of the parity checklist ([`docs/parity-checklist.md`](parity-checklist.md)) for shapes and selection.
 
 ## Curved solids
 

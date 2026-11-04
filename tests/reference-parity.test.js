@@ -1,11 +1,11 @@
-// Compares the extracted maths with the prototype it was extracted from (decisions.md D-021).
+// Compares the extracted maths with the prototype it was extracted from.
 //
 // At test time this reads reference/solid-explorer.html, cuts out the SHAPES, pyramid and MODES
 // code (plus the small helpers beside it) and runs it with a stand-in for three.js. Every shape,
 // mode, string and number in src/ is then compared with the original, so an accidental edit to a
 // name, a default, an error message, a vertex or a triangle shows up here.
 //
-// The only differences allowed are the two corrected defaults (decisions.md Q-1, D-017).
+// The only differences allowed are the two corrected defaults (listed in CHANGELOG.md).
 //
 // This file skips itself if the reference is not on disk. Remove it, or replace it with a
 // snapshot, once v1.0 has shipped and the reference is retired.

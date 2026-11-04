@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { defaultsOf, freshDims, resolveDims } from '../src/ui/dims-model.js';
 
-// A mode shaped like the real ones (see .claude/skills/define-by-modes.md), defined here so this
+// A mode shaped like the real ones (see src/modes.js), defined here so this
 // test does not depend on src/modes.js.
 const needGT = (big, small, msg) => (big <= small ? { error: msg } : null);
 const coneBySlant = {

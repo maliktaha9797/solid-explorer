@@ -84,7 +84,7 @@ The keys do nothing while you are typing in a box.
 
 Be clear about this before you rely on it in a lesson.
 
-- **Tested:** Chrome on a Mac, at desktop width and at 390 pixels wide, both on the development server and on the single `index.html` opened from disk. The tests were run by scripts, with the 3D drawn by software rather than a graphics card. The behaviour was checked item by item against the original single-file prototype that this project was made from. The checklist is in `.claude/skills/parity-checklist.md` and the results are in `.claude/context/parity/results.md`.
+- **Tested:** Chrome on a Mac, at desktop width and at 390 pixels wide, both on the development server and on the single `index.html` opened from disk. The tests were run by scripts, with the 3D drawn by software rather than a graphics card. The behaviour was checked item by item against the original single-file prototype that this project was made from. The checklist is in [`docs/parity-checklist.md`](docs/parity-checklist.md). The record of that run is kept by the maintainer and is not in this repository.
 - **Not tested:** Safari and Firefox. They may well work, but nobody has checked.
 - **Touch** was tested with emulated touch events only, not on a real phone or tablet.
 - **The maths** has automatic tests: every shape, every Define by mode, the triangle solver and the number formatting.

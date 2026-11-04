@@ -136,7 +136,7 @@ describe('defaults are consistent', () => {
   );
 });
 
-describe('the two corrected defaults (decisions.md Q-1, D-017)', () => {
+describe('the two corrected defaults (listed in CHANGELOG.md)', () => {
   it('rectangular pyramid "Base and slant edge" now defaults to e = 7.63', () => {
     expect(MODES.rectpyramid[2].name).toBe('Base and slant edge');
     expect(inputDefault('rectpyramid', 2, 'e')).toBe(7.63);

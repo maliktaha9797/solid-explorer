@@ -83,7 +83,7 @@ These are not matters of taste. Each protects something.
 
 ## Writing
 
-Words on the screen, in the README and in the docs follow `.claude/skills/teaching-copy.md`. The short version:
+Words on the screen, in the README and in the docs follow these rules:
 
 - Short sentences, one idea in each.
 - **British spelling:** centre, metre, colour.
@@ -102,13 +102,9 @@ A bug fix should come with a test that fails without the fix, where the bug is i
 
 - Write commit messages as [Conventional Commits](https://www.conventionalcommits.org/): `feat(shapes): add frustum`, `fix(modes): correct a default`, `docs: explain the controls`.
 - Keep a pull request to one thing.
-- Fill in the pull request template. It asks which items of the parity checklist your change touches. The checklist is [`.claude/skills/parity-checklist.md`](https://github.com/maliktaha9797/solid-explorer/blob/main/.claude/skills/parity-checklist.md). Run those items by hand, in the browser, on `npm run dev` and on `dist/index.html` from your disk, and write down what you saw. Green means you saw it working.
+- Fill in the pull request template. It asks which items of the parity checklist your change touches. The checklist is [`docs/parity-checklist.md`](docs/parity-checklist.md). Run those items by hand, in the browser, on `npm run dev` and on `dist/index.html` from your disk, and write down what you saw. Green means you saw it working.
 - Add a line to `CHANGELOG.md` under **Unreleased**, in the style of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `npm run check` must pass. The same checks run on every pull request.
-
-## The `.claude` folder
-
-The `.claude/` folder holds the project's notes, written for working with [Claude Code](https://claude.com/claude-code): decisions, the parity checklist and its results, and the guides it follows. You do not need it, and you do not need Claude Code, to contribute. Some of it is useful reading, especially the parity checklist and the decisions log (`.claude/context/decisions.md`), which explains why things are the way they are.
 
 ## Licence
 

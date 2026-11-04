@@ -45,7 +45,7 @@ Say what must be true, not what went wrong, as one full sentence with a full sto
 
 > The slant height must be longer than the radius.
 
-This is the same sentence the cone's "Radius and slant height" mode uses, because it is the same rule. See `.claude/skills/teaching-copy.md` for the voice rules.
+This is the same sentence the cone's "Radius and slant height" mode uses, because it is the same rule. See "Writing" in [CONTRIBUTING.md](../CONTRIBUTING.md#writing) for the voice rules.
 
 ## Step 3: Decide what needs an `extra` line
 
@@ -143,7 +143,7 @@ The good row works out as `h = √(4.5² − 4²) = 2.06`: a short, wide cone.
 
 If you forget the boundary row, the test called "covers every mode that has a needGT or other validation" fails and tells you which mode is missing.
 
-`tests/reference-parity.test.js` compares the modes with the original prototype and fails on any new mode by design. Before your first new mode or shape, retire it or turn it into a snapshot. See decision D-021 in `.claude/context/decisions.md`.
+`tests/reference-parity.test.js` compares the modes with the original prototype and fails on any new mode by design. Before your first new mode or shape, retire it or turn it into a snapshot. The comment at the top of that file says what it does.
 
 ## Step 8: Look at it in the app
 
@@ -159,7 +159,7 @@ Choose **Cone**, then **Define by**, then **Diameter and slant height**. You sho
 
 Now type 4 into the slant height. The red message appears and the cone stays as it was. Type 4.5 and the cone gets short and wide.
 
-Finally, run `npm run check`, and run the parts of the parity checklist (`.claude/skills/parity-checklist.md`) that mention shapes, modes and selection.
+Finally, run `npm run check`, and run the parts of the parity checklist ([`docs/parity-checklist.md`](parity-checklist.md)) that mention shapes, modes and selection.
 
 ## Modes that take an angle
 
