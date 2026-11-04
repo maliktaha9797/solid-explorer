@@ -13,7 +13,7 @@ Run each item your change could affect on **both** builds:
 
 Do it at desktop width and at 390 pixels wide. For anything in the 3D view, also do it on a display with a pixel ratio of 2: on a Retina Mac, or in Chrome's DevTools with the device pixel ratio set to 2. Open `reference/solid-explorer.html` beside it when you want to compare, remembering that the changelog lists where this version differs on purpose.
 
-An item is green only if you saw it working. "Not run" is a fair answer. Write it down instead of ticking the box. The releases so far were checked in Chrome only, with emulated touch, and from 1.0.2 on a pixel ratio of 1 and an emulated pixel ratio of 2. Safari, Firefox, a real Retina screen and real touch devices have not been checked, so a report from any of them is welcome.
+An item is green only if you saw it working. "Not run" is a fair answer. Write it down instead of ticking the box. The releases so far were checked in Chrome only, with emulated touch, and from 1.0.2 on a pixel ratio of 1 and an emulated pixel ratio of 2, with a short look at a real 2x display and graphics card. Safari, Firefox, real touch devices and a full run of this list on a real Retina screen have not been done, so a report from any of them is welcome.
 
 If you find a behaviour that is not on this list and matters, add it here in the same pull request.
 
