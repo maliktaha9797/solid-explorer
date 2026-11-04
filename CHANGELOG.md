@@ -7,6 +7,8 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-11-04
+
 ### Fixed
 
 - **A display with a pixel ratio of 2, such as a Retina Mac.** The 3D view was drawn twice as big

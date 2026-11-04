@@ -1,6 +1,6 @@
 {
   "name": "solid-explorer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Pythagoras' theorem and trigonometry in 3D solids. A browser-based teaching tool.",
   "type": "module",
