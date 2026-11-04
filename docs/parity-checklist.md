@@ -39,6 +39,7 @@ If you find a behaviour that is not on this list and matters, add it here in the
 ## Working panel
 
 - [ ] The flattened triangle has its right angle at the bottom left, θ at the correct vertex, and side labels
+- [ ] Every label of the flattened triangle shows in full, the one on the left side included: `CG = 4`, not `G = 4`. Try a corner renamed to two letters and a long number such as 1234.57. This is a deliberate difference from the prototype, which cut the left label off
 - [ ] The Pythagoras, tan⁻¹, and sin and cos check lines show the right numbers. Spot-check a cuboid with l = 3 and w = 4: AC = 5
 - [ ] Hide answers turns every answer into a `?`, including the ones inside √ and tan⁻¹
 - [ ] Renaming corners changes the titles, notes, chips, labels, flattened triangle and working

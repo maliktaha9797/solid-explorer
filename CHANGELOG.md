@@ -7,6 +7,15 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Working tab, the flattened triangle:** the label on the left side lost its first letters, so
+  `CG = 4` showed as `G = 4`. The prototype did the same. The triangle now starts far enough in for
+  the whole label to show, whatever the letters and the number are (a corner renamed to two letters
+  or a length such as 1234.57 included), and the angle label no longer slips off the left edge of a
+  tall, thin triangle. The triangle is a little narrower to make room, about 7 per cent for an
+  ordinary one.
+
 ## [1.0.0] - 2026-11-04
 
 ### Added
