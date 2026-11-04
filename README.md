@@ -84,7 +84,7 @@ The keys do nothing while you are typing in a box.
 
 Be clear about this before you rely on it in a lesson.
 
-- **Tested:** Chrome on a Mac, at desktop width and at 390 pixels wide, both on the development server and on the single `index.html` opened from disk. The tests were run by scripts, with the 3D drawn by software rather than a graphics card. The behaviour was checked item by item against the original single-file prototype that this project was made from. The checklist is in [`docs/parity-checklist.md`](docs/parity-checklist.md). The record of that run is kept by the maintainer and is not in this repository.
+- **Tested:** Chrome on a Mac, at desktop width and at 390 pixels wide, both on the development server and on the single `index.html` opened from disk. The tests were run by scripts, with the 3D drawn by software rather than a graphics card. Version 1.0.0 and 1.0.1 were only checked on a normal display, and a Retina screen (a pixel ratio of 2) showed the 3D view twice as big and out of place. That is fixed from 1.0.2, and both a pixel ratio of 1 and of 2 are now checked, with Chrome's emulation of a 2x display, not on a real Retina screen. The behaviour was checked item by item against the original single-file prototype that this project was made from, except where the changelog says it was changed. The checklist is in [`docs/parity-checklist.md`](docs/parity-checklist.md). The record of that run is kept by the maintainer and is not in this repository.
 - **Not tested:** Safari and Firefox. They may well work, but nobody has checked.
 - **Touch** was tested with emulated touch events only, not on a real phone or tablet.
 - **The maths** has automatic tests: every shape, every Define by mode, the triangle solver and the number formatting.
@@ -92,7 +92,7 @@ Be clear about this before you rely on it in a lesson.
 ## Known limits
 
 - On a screen about the width of a phone, the toolbar runs off the right edge, so the page is wider than the screen. The original prototype did the same. The side panel does become a sheet at the bottom.
-- Picking a line, typing a number or switching a display option puts the zoom back to the starting distance. Your rotation stays.
+- Typing a new size or choosing another shape puts the zoom back to the starting distance. Your rotation stays, and so does your zoom when you do anything else.
 - The keyboard shortcuts do not look for `Ctrl` or `Cmd`, so `Ctrl+R` (reload) also resets the view.
 
 ## Add a shape or a way to define one

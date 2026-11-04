@@ -11,9 +11,9 @@ Run each item your change could affect on **both** builds:
 - the development server (`npm run dev`), and
 - the single file, `dist/index.html`, opened from your disk by double-clicking it (`npm run build` makes it).
 
-Do it at desktop width and at 390 pixels wide, and open `reference/solid-explorer.html` beside it when you want to compare.
+Do it at desktop width and at 390 pixels wide. For anything in the 3D view, also do it on a display with a pixel ratio of 2: on a Retina Mac, or in Chrome's DevTools with the device pixel ratio set to 2. Open `reference/solid-explorer.html` beside it when you want to compare, remembering that the changelog lists where this version differs on purpose.
 
-An item is green only if you saw it working. "Not run" is a fair answer. Write it down instead of ticking the box. The first release was checked in Chrome only, with emulated touch. Safari, Firefox and real touch devices have not been checked, so a report from any of them is welcome.
+An item is green only if you saw it working. "Not run" is a fair answer. Write it down instead of ticking the box. The releases so far were checked in Chrome only, with emulated touch, and from 1.0.2 on a pixel ratio of 1 and an emulated pixel ratio of 2. Safari, Firefox, a real Retina screen and real touch devices have not been checked, so a report from any of them is welcome.
 
 If you find a behaviour that is not on this list and matters, add it here in the same pull request.
 
@@ -50,11 +50,12 @@ If you find a behaviour that is not on this list and matters, add it here in the
 - [ ] Iso, Front, Top and Right animate, and Reset re-centres the pan and zoom
 - [ ] Keys: 1 to 4 for the views, R to reset, Esc to clear, `]` to toggle the panel, `+` and `-` to zoom. The keys do nothing while you are typing in a box
 - [ ] The axis gizmo turns with the model and sits above the status bar
-- [ ] The Ground grid switch removes the 3D grid only. The soft shadow under the model stays, as in the prototype. The Transparent faces switch fades the faces in and out
+- [ ] The floor is one 3D grid that goes all the way round the solid and fades out towards the horizon, in all four views, and there is no flat grid in the page behind it. The Ground grid switch removes the floor only. The soft shadow under the model stays. The Transparent faces switch fades the faces in and out
 
 ## Page and saved settings
 
 - [ ] The panel collapses from the edge handle, the toolbar button and the key, and its state survives a reload
+- [ ] The arrow on the edge handle points at the edge when the panel is open and out into the page when it is closed. On a phone-width screen it points down when the sheet is open and up when it is closed
 - [ ] The theme toggle works, follows the device when nothing is saved, and is remembered
 - [ ] The shape and unit are remembered
 - [ ] On a phone-width screen the panel becomes a sheet at the bottom, its handle moves to the top edge, and the legend and key hints are hidden
@@ -81,7 +82,9 @@ If you find a behaviour that is not on this list and matters, add it here in the
 
 ## The scene
 
-- [ ] Anything that rebuilds the model puts the camera back to the default distance, unless a zoom or view animation is still running. That covers selecting or deselecting a line, typing a dimension, Esc, any display switch including Hide answers, and the theme. Rotation and pan are kept. This is a quirk of the prototype, kept on purpose
+- [ ] The zoom is kept when the model is rebuilt without a new shape or size: selecting or deselecting a line or a triangle, Esc, any display switch including Hide answers, the units, a renamed corner, and the theme. Another shape, or a new size typed into a dimension, puts the camera back to the default distance. Rotation and pan are always kept. (The prototype put the zoom back every time.)
+- [ ] On a display with a pixel ratio of 2 the 3D view is the same picture as at 1 but sharper: the solid lines up with its corner letters and labels, it opens in the middle of the view, and the axis arrows show in the bottom right corner
+- [ ] Every solid opens fully in view, with room round it, in light and dark and with the panel open and closed. A very large solid, such as a cuboid 1000 by 600 by 400, is drawn too
 - [ ] The hover tooltip and the pick cursor appear for a mouse only, not for touch or a pen. The tooltip hides when a press starts and when the pointer leaves the canvas
 - [ ] A drag that starts on the canvas and leaves it keeps rotating until you let go
 - [ ] A slow drag leaves no momentum. A quick flick keeps spinning and slows to a stop. A new press stops it

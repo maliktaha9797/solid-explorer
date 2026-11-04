@@ -7,6 +7,32 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **A display with a pixel ratio of 2, such as a Retina Mac.** The 3D view was drawn twice as big
+  and shifted up and right, so the solid did not line up with its labels, it opened far too close,
+  zooming out seemed to do very little, and the axis arrows were off the screen. The prototype did
+  the same. The scene is now drawn at the right size on every display, and it follows the window
+  when it moves to a screen with a different pixel ratio.
+- **A solid that is too big for the lens.** A large solid, such as a cuboid 1000 by 600 by 400, was
+  not drawn at all, because the camera could not see that far. The camera now works to the size of
+  the solid.
+- **The default view.** A cube of side 6 (and, a little less, the square pyramid) opened with its
+  lower corner out of view. Every solid now opens fully in view, with room round it. The default
+  cuboid is about 8 per cent further out than before.
+- **Zoom is kept** when you change the theme, pick a line or a triangle, press Esc, switch an option
+  on or off, change the units or rename a corner. Before, each of these put the zoom back. A new
+  shape or a new size still does.
+- **The panel arrow** points the other way round. It points at the edge when the panel is open, and
+  out into the page when it is closed (on a phone, down when open and up when closed).
+
+### Changed
+
+- **One floor.** The flat grid in the page behind the 3D view is gone. The 3D ground grid is now
+  one floor that goes all the way round the solid and fades out towards the horizon, in every
+  view, instead of a small square of grid lying over a flat one. The Ground grid switch still turns
+  it off.
+
 ## [1.0.1] - 2026-11-04
 
 ### Fixed
