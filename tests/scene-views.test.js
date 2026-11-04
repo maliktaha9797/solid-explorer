@@ -7,6 +7,7 @@ import {
   buildViewQuaternions,
   createViews,
   ease,
+  needsReframe,
   pinchZ,
   wheelTarget,
   zoomInTarget,
@@ -233,5 +234,20 @@ describe('createViews', () => {
     camera.position.z = 9;
     views.placeCamera();
     expect(camera.position.z).toBe(9);
+  });
+});
+
+describe('needsReframe: when the camera goes back to the default distance', () => {
+  const cuboid = { shapeKey: 'cuboid', camDist: 18 };
+
+  it('goes back for the first build, for another shape and for another size', () => {
+    expect(needsReframe(null, cuboid)).toBe(true);
+    expect(needsReframe(cuboid, { shapeKey: 'cone', camDist: 18 })).toBe(true); // same distance, new shape
+    expect(needsReframe(cuboid, { shapeKey: 'cuboid', camDist: 20 })).toBe(true); // bigger
+    expect(needsReframe(cuboid, { shapeKey: 'cuboid', camDist: 16 })).toBe(true); // smaller
+  });
+
+  it('keeps the zoom for a rebuild of the same solid: a line, the theme, a switch, a renamed corner', () => {
+    expect(needsReframe(cuboid, { shapeKey: 'cuboid', camDist: 18 })).toBe(false);
   });
 });

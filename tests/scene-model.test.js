@@ -6,8 +6,10 @@ import { MODES } from '../src/modes.js';
 import { createState } from '../src/state.js';
 import { freshDims } from '../src/ui/dims-model.js';
 import {
+  boundingRadius,
   cornerLabelPos,
   dimLabelPos,
+  FIT_DISTANCE,
   lengthLabelPos,
   maxDimOf,
   rebuild,
@@ -88,6 +90,57 @@ describe('label positions', () => {
   });
 });
 
+describe('framing: the default camera distance', () => {
+  const SIN_HALF_LENS = Math.sin((18 * Math.PI) / 180); // the lens is 36 degrees
+
+  it('boundingRadius is the distance to the furthest corner, or the rim of a curved base', () => {
+    expect(boundingRadius({ verts: { A: [3, 4, 0], B: [-1, 0, 0] } })).toBe(5);
+    expect(
+      boundingRadius({
+        verts: { A: [0, 3.5, 0], B: [4, -3.5, 0] },
+        curved: { kind: 'cone', r: 4, h: 7 },
+      }),
+    ).toBeCloseTo(Math.hypot(4, 3.5), 12);
+    // a curved solid whose rim is wider than any listed vertex
+    expect(
+      boundingRadius({ verts: { V: [0, 3, 0] }, curved: { kind: 'cylinder', r: 5, h: 6 } }),
+    ).toBeCloseTo(Math.hypot(5, 3), 12);
+  });
+
+  it('the default cuboid starts a little further out than it used to (18)', () => {
+    const r = build(stateFor('cuboid'));
+    expect(r.camDist).toBeGreaterThan(18);
+    expect(r.camDist).toBeLessThan(18 * 1.1);
+    expect(r.camDist).toBeCloseTo(FIT_DISTANCE * boundingRadius(r.built), 9);
+  });
+
+  it('every solid in every mode, at its default size, fits inside the lens with room to spare', () => {
+    for (const shapeKey of Object.keys(MODES)) {
+      MODES[shapeKey].forEach((_, modeIdx) => {
+        const r = build(stateFor(shapeKey, modeIdx));
+        const radius = boundingRadius(r.built);
+        expect(radius / r.camDist, `${shapeKey} mode ${modeIdx}`).toBeLessThan(SIN_HALF_LENS * 0.9);
+        // and never nearer than the old distance
+        expect(r.camDist, `${shapeKey} mode ${modeIdx}`).toBeGreaterThanOrEqual(r.maxDim * 2 + 2);
+        expect(r.camDist).toBeGreaterThanOrEqual(FIT_DISTANCE * radius - 1e-9);
+      });
+    }
+  });
+
+  it('the cube, which used to lose its lower corner, is now framed like the other solids', () => {
+    const r = build(stateFor('cube'));
+    expect(r.camDist).toBeGreaterThan(r.maxDim * 2 + 2); // 14 before
+    expect(boundingRadius(r.built) / r.camDist).toBeLessThan(SIN_HALF_LENS);
+  });
+
+  it('a large solid is framed the same way (the distance follows its size)', () => {
+    const small = build(stateFor('cuboid'));
+    const big = build(stateFor('cuboid', 0, { dimVals: { l: 800, w: 500, h: 400 } }));
+    expect(big.camDist / small.camDist).toBeGreaterThan(90);
+    expect(boundingRadius(big.built) / big.camDist).toBeLessThan(SIN_HALF_LENS);
+  });
+});
+
 describe('rebuild: what is built', () => {
   it('the default cuboid has 12 edges, 16 diagonals, 3 dimension labels and 8 corner letters', () => {
     const r = build(stateFor('cuboid'));
@@ -96,7 +149,7 @@ describe('rebuild: what is built', () => {
     expect(r.labelItems.filter((l) => l.cls === '')).toHaveLength(8);
     expect(r.labelItems).toHaveLength(11);
     expect(r.maxDim).toBe(8);
-    expect(r.camDist).toBe(18);
+    expect(r.camDist).toBeGreaterThan(18); // fitted to the solid, see the framing tests
   });
 
   it('hit tubes are invisible but raycastable: opacity 0, transparent, no depth write, visible', () => {
@@ -150,16 +203,37 @@ describe('rebuild: what is built', () => {
     expect(off.model.children[0].material.opacity).toBe(0);
   });
 
-  it('the grid is built unless Ground grid is off, and the ground shadow always is', () => {
+  it('the floor is built unless Ground grid is off, and the ground shadow always is', () => {
     const on = build(stateFor('cuboid'));
     expect(on.env.children).toHaveLength(2);
-    expect(on.env.children[0]).toBeInstanceOf(THREE.GridHelper);
-    expect(on.env.children[0].material.opacity).toBe(0.7);
-    expect(on.env.children[0].position.y).toBeCloseTo(-2 - 8 * 0.01, 12);
+    const floor = on.env.children[0];
+    expect(floor).toBeInstanceOf(THREE.Mesh);
+    expect(floor.material).toBeInstanceOf(THREE.ShaderMaterial);
+    expect(on.floor).toBe(floor.material);
+    expect(floor.material.uniforms.uOpacity.value).toBe(0.7);
+    expect(floor.position.y).toBeCloseTo(-2 - 8 * 0.01, 12);
     expect(on.env.children[1].position.y).toBeCloseTo(-2 - 8 * 0.005, 12);
     const off = build(stateFor('cuboid', 0, { toggles: { ...stateFor().toggles, grid: false } }));
     expect(off.env.children).toHaveLength(1);
     expect(off.env.children[0].geometry).toBeInstanceOf(THREE.PlaneGeometry);
+    expect(off.floor).toBeNull();
+  });
+
+  it('the floor is one grid that reaches the horizon: fine lines a quarter of maxDim apart, and so wide that it fades out long before its edge', () => {
+    const r = build(stateFor('cuboid'));
+    const floor = r.env.children[0];
+    expect(r.floor.uniforms.uStep.value).toBe(8 / 4); // the old 12-division grid on 3 maxDim
+    expect(r.floor.transparent).toBe(true);
+    expect(r.floor.depthWrite).toBe(false);
+    expect(r.floor.extensions.derivatives).toBe(true); // the lines are anti-aliased with fwidth
+    expect(floor.renderOrder).toBeLessThan(0); // drawn before the faces
+    floor.geometry.computeBoundingBox();
+    const half = floor.geometry.boundingBox.max.x;
+    // the floor fades out between 2 and 5 camera distances, and the camera can sit 3 times further out
+    expect(half).toBeGreaterThanOrEqual(r.camDist * 3 * 5);
+    // it lies flat (all of it at one height)
+    expect(floor.geometry.boundingBox.min.y).toBeCloseTo(0, 9);
+    expect(floor.geometry.boundingBox.max.y).toBeCloseTo(0, 9);
   });
 
   it('dashed lines are real dashes: they carry line distances', () => {

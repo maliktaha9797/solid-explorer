@@ -16,8 +16,9 @@
 import * as THREE from 'three';
 import { createControls } from './controls.js';
 import { createLabels } from './labels.js';
+import { gizmoViewport, mainViewport } from './layout.js';
 import { createGroundTexture, readColours, rebuild } from './model.js';
-import { createViews } from './views.js';
+import { createViews, needsReframe } from './views.js';
 
 // Changing any of these rebuilds the model. `view`, `dragTool`, `tab`, `panelOpen`, `lastGood`
 // and `dimError` do not.
@@ -34,11 +35,6 @@ const REBUILD_KEYS = [
   'theme',
   'systemDark',
 ];
-
-// The axis gizmo is drawn into a square in the bottom-right corner, above the 30 px status bar.
-const GIZMO_SIZE = 84,
-  GIZMO_PAD = 14,
-  STATUS_BAR = 30;
 
 export function mount(state) {
   const $ = (s) => document.querySelector(s);
@@ -103,10 +99,22 @@ export function mount(state) {
     getModel: () => current,
   });
 
+  // The shape and the default camera distance the camera was last placed for.
+  let framed = null;
+
   function rebuildScene(s) {
     current = rebuild(s, { model, env, colours: readColours(), groundTex });
     labels.setItems(current.labelItems);
-    views.placeCamera();
+    // A large solid sits far from the camera, so the clipping planes move out with it. For the
+    // usual sizes these stay at 0.1 and 1000.
+    camera.near = Math.max(0.1, current.camDist * 0.005);
+    camera.far = Math.max(1000, current.camDist * 40);
+    camera.updateProjectionMatrix();
+    // The camera goes back to the default distance for a new shape or a new size. A rebuild for
+    // any other reason (a selected line, a switch, the theme, a renamed corner) keeps the zoom.
+    const next = { shapeKey: s.shapeKey, camDist: current.camDist };
+    if (needsReframe(framed, next)) views.placeCamera();
+    framed = next;
   }
 
   state.subscribe((s, changed) => {
@@ -114,6 +122,9 @@ export function mount(state) {
   });
 
   function resize() {
+    // Follow the display's pixel ratio, which changes when the window moves to another screen.
+    const want = Math.min(devicePixelRatio, 2);
+    if (renderer.getPixelRatio() !== want) renderer.setPixelRatio(want);
     const w = stage.clientWidth,
       h = stage.clientHeight,
       pr = renderer.getPixelRatio();
@@ -129,19 +140,17 @@ export function mount(state) {
     if (!views.stepAnimation()) controls.stepMomentum();
     views.stepPanHome();
     views.stepZoom();
-    const w = canvas.width,
-      h = canvas.height,
-      pr = renderer.getPixelRatio();
-    renderer.setViewport(0, 0, w, h);
+    // Sizes for setViewport and setScissor are in CSS pixels. three.js applies the pixel ratio.
+    const w = stage.clientWidth,
+      h = stage.clientHeight;
+    if (current.floor) current.floor.uniforms.uPx.value = renderer.getPixelRatio();
+    renderer.setViewport(...mainViewport(w, h));
     renderer.setScissorTest(false);
     renderer.render(scene, camera);
-    const gs = Math.round(GIZMO_SIZE * pr),
-      pad = Math.round(GIZMO_PAD * pr),
-      bottom = Math.round(STATUS_BAR * pr);
     renderer.autoClear = false;
     renderer.setScissorTest(true);
-    renderer.setScissor(w - gs - pad, bottom + pad, gs, gs);
-    renderer.setViewport(w - gs - pad, bottom + pad, gs, gs);
+    renderer.setScissor(...gizmoViewport(w));
+    renderer.setViewport(...gizmoViewport(w));
     gGroup.quaternion.copy(world.quaternion);
     renderer.render(gScene, gCam);
     renderer.setScissorTest(false);

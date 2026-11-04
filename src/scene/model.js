@@ -8,7 +8,9 @@
 //   labelItems   [{ pos, text, cls }, ...] for scene/labels.js, in model space
 //   hitMeshes    the invisible tubes picking runs against; userData is { a, b, k }
 //   maxDim       twice the largest absolute vertex coordinate
-//   camDist      the default camera distance, maxDim * 2 + 2
+//   camDist      the default camera distance: maxDim * 2 + 2, or further out if that would not
+//                show the whole solid (see boundingRadius)
+//   floor        the floor's ShaderMaterial (its uPx uniform follows the pixel ratio), or null
 //
 // Colours come in as THREE.Color objects (readColours() reads them from the CSS tokens), so this
 // module needs no DOM and its pure parts run in Node. Geometries and materials are disposed on
@@ -23,7 +25,7 @@ import { edgeKey } from '../geometry/diagonals.js';
 const V = (a) => new THREE.Vector3(a[0], a[1], a[2]);
 
 // Three colours the model uses come from CSS custom properties, which change with the theme. Only
-// hex tokens go through THREE.Color (--grid is rgba and is for CSS only).
+// hex tokens go through THREE.Color.
 export function readColours() {
   const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const col = (n) => new THREE.Color(css(n));
@@ -50,6 +52,93 @@ export function createGroundTexture() {
   g.fillRect(0, 0, 256, 256);
   return new THREE.CanvasTexture(c);
 }
+
+// The floor: one grid that reaches the horizon in every view and fades out with distance, so there
+// is never an edge. The lines are worked out per pixel from where each point of the floor lies, so
+// they stay one pixel wide and do not shimmer. The fine lines are a quarter of the solid's size
+// apart, as the old 12-division grid was, and every fourth one is drawn stronger.
+const FLOOR_VERT = `
+  varying vec2 vLocal;
+  varying vec3 vWorld;
+  void main() {
+    vLocal = position.xz;
+    vec4 w = modelMatrix * vec4(position, 1.0);
+    vWorld = w.xyz;
+    gl_Position = projectionMatrix * viewMatrix * w;
+  }
+`;
+const FLOOR_FRAG = `
+  uniform vec3 uMinor;
+  uniform vec3 uMajor;
+  uniform float uStep;
+  uniform float uPx;
+  uniform float uOpacity;
+  varying vec2 vLocal;
+  varying vec3 vWorld;
+
+  // 1 on a line, 0 between lines. Lines are about one CSS pixel wide. Where the cells get smaller
+  // than a couple of pixels (near the horizon) they fade out instead of shimmering.
+  float lines(vec2 p, float step) {
+    vec2 c = p / step;
+    vec2 w = fwidth(c);
+    vec2 g = abs(fract(c - 0.5) - 0.5) / max(w * uPx, vec2(1e-5));
+    float line = 1.0 - clamp(min(g.x, g.y) * 1.4 - 0.2, 0.0, 1.0);
+    return line * (1.0 - smoothstep(0.15, 0.4, max(w.x, w.y)));
+  }
+
+  void main() {
+    float fine = lines(vLocal, uStep);
+    float coarse = lines(vLocal, uStep * 4.0);
+    // distance from the camera, in camera distances (the camera looks at the middle of the solid)
+    float far = distance(vWorld, cameraPosition) / length(cameraPosition);
+    float a = max(fine, coarse) * uOpacity * (1.0 - smoothstep(2.0, 5.0, far));
+    if (a < 0.003) discard;
+    gl_FragColor = vec4(mix(uMinor, uMajor, coarse), a);
+  }
+`;
+
+function floorMesh(maxDim, camDist, colours) {
+  // Big enough that the fade ends well inside it, even zoomed all the way out.
+  const half = camDist * 16;
+  const geometry = new THREE.PlaneGeometry(half * 2, half * 2);
+  geometry.rotateX(-Math.PI / 2);
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      uMinor: { value: colours.line },
+      uMajor: { value: colours.line2 },
+      uStep: { value: maxDim / 4 },
+      uPx: { value: 1 },
+      uOpacity: { value: 0.7 },
+    },
+    vertexShader: FLOOR_VERT,
+    fragmentShader: FLOOR_FRAG,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    extensions: { derivatives: true },
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.renderOrder = -1; // behind the faces, whatever the depth sort says
+  mesh.frustumCulled = false;
+  return mesh;
+}
+
+// ---------- Framing (pure) ----------
+
+// The radius of the smallest sphere about the origin that holds the whole solid. The solids are
+// centred on the origin, and a cone or cylinder also holds the circle of its base.
+export function boundingRadius(built) {
+  let r2 = 0;
+  for (const p of Object.values(built.verts)) r2 = Math.max(r2, p[0] ** 2 + p[1] ** 2 + p[2] ** 2);
+  if (built.curved) r2 = Math.max(r2, built.curved.r ** 2 + (built.curved.h / 2) ** 2);
+  return Math.sqrt(r2);
+}
+
+// The camera looks through a 36 degree lens, so a sphere of radius R only just fits at a distance of
+// R / sin(18 degrees), which is 3.236 R. 3.8 R leaves about a seventh of the view free around that
+// sphere, so the corner letters and the status bar at the bottom do not touch the solid. (The
+// default cuboid sat at 3.5 R before.)
+export const FIT_DISTANCE = 3.8;
 
 // ---------- Label positions (pure; model space) ----------
 
@@ -212,19 +301,21 @@ export function rebuild(s, { model, env, colours, groundTex }) {
     hitMeshes = [];
 
   const maxDim = maxDimOf(verts);
-  const camDist = maxDim * 2.0 + 2;
+  // The old distance, unless that is too near for the whole solid to show with room to spare (a
+  // cube of side 6 used to lose its lower corner).
+  const camDist = Math.max(maxDim * 2.0 + 2, FIT_DISTANCE * boundingRadius(built));
   const thick = maxDim * 0.008;
   const { ink, accent, teal, blue } = colours;
   const showFaces = toggles.faces;
 
   // Environment
   const minY = Math.min(...Object.values(verts).map((p) => p[1]));
+  let floor = null;
   if (toggles.grid) {
-    const grid = new THREE.GridHelper(maxDim * 3, 12, colours.line2, colours.line);
-    grid.position.y = minY - maxDim * 0.01;
-    grid.material.transparent = true;
-    grid.material.opacity = 0.7;
-    env.add(grid);
+    const mesh = floorMesh(maxDim, camDist, colours);
+    mesh.position.y = minY - maxDim * 0.01;
+    env.add(mesh);
+    floor = mesh.material;
   }
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(maxDim * 1.6, maxDim * 1.6),
@@ -373,5 +464,5 @@ export function rebuild(s, { model, env, colours, groundTex }) {
       });
     });
 
-  return { built, labelItems, hitMeshes, maxDim, camDist };
+  return { built, labelItems, hitMeshes, maxDim, camDist, floor };
 }

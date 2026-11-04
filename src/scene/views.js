@@ -50,6 +50,13 @@ export const wheelTarget = (z, deltaY, camDist) =>
 export const pinchZ = (z, prevDistance, distance, camDist) =>
   Math.min(camDist * ZOOM_MAX, Math.max(camDist * ZOOM_MIN, (z * prevDistance) / distance));
 
+// The camera goes back to the default distance when the solid is new: another shape, or the same
+// shape at another size (the default distance follows the size). A rebuild for any other reason, such
+// as a selected line, a switch, the theme or a renamed corner, keeps the zoom the student chose.
+// prev and next are { shapeKey, camDist }; prev is null before the first build.
+export const needsReframe = (prev, next) =>
+  !prev || prev.shapeKey !== next.shapeKey || prev.camDist !== next.camDist;
+
 // opts:
 //   world        the THREE.Group the user rotates and pans
 //   camera       the perspective camera (only position.z is changed)
@@ -103,8 +110,8 @@ export function createViews({ world, camera, getCamDist, setView }) {
       camera.position.z = pinchZ(camera.position.z, prevDistance, distance, getCamDist());
       targetZ = null;
     },
-    // After a rebuild the camera goes back to the default distance, unless a zoom or view
-    // animation is still running (the reference does the same).
+    // Puts the camera at the default distance for the current solid, unless a zoom or view
+    // animation is still running. The caller decides when (see needsReframe).
     placeCamera() {
       if (targetZ === null) camera.position.set(0, 0, getCamDist());
     },
