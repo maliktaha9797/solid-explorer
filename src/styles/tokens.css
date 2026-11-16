@@ -161,5 +161,10 @@
 }
 
 @media (max-width: 860px) {
-  :root { --tb: 48px; }
+  :root { --tb: 48px; --sheet: min(46vh, 460px); }
+  @supports (height: 100dvh) { :root { --sheet: min(46dvh, 460px); } }
+}
+/* A phone held sideways is short: the panel stays beside the 3D view, and narrower. */
+@media (max-height: 520px) {
+  :root { --tb: 44px; --pw: min(44vw, 340px); }
 }

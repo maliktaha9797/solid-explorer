@@ -16,7 +16,7 @@
 import * as THREE from 'three';
 import { createControls } from './controls.js';
 import { createLabels } from './labels.js';
-import { gizmoViewport, mainViewport } from './layout.js';
+import { FOV, fovFor, gizmoViewport, mainViewport } from './layout.js';
 import { createGroundTexture, readColours, rebuild } from './model.js';
 import { createViews, needsReframe } from './views.js';
 
@@ -47,7 +47,7 @@ export function mount(state) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 1000);
   scene.add(new THREE.AmbientLight(0xffffff, 0.8));
   const keyL = new THREE.DirectionalLight(0xffffff, 0.6);
   keyL.position.set(6, 10, 8);
@@ -131,6 +131,7 @@ export function mount(state) {
     if (canvas.width !== Math.floor(w * pr) || canvas.height !== Math.floor(h * pr)) {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
+      camera.fov = fovFor(camera.aspect);
       camera.updateProjectionMatrix();
     }
   }

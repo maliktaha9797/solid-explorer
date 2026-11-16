@@ -3,7 +3,7 @@
 //
 //   left drag          rotate, with momentum        (the Pan tool, Shift or the right button: pan)
 //   two pointers       pinch zoom and pan together
-//   click on a line    select it, if the pointer never travelled more than 4 px
+//   click on a line    select it, if the pointer never travelled more than 4 px (10 px for a finger)
 //   mouse hover        tooltip "AB = x unit" and the pick cursor (mouse only, not touch or pen)
 //   wheel              eased zoom                    double-click: iso view
 //   keys               1 R iso, 2 front, 3 top, 4 right, Esc clear, ] [ panel, + = zoom in, - out
@@ -18,6 +18,11 @@ import { fmt, nm } from '../format.js';
 export const ROTATE_PER_PX = 0.0075;
 // A pointer that stays within this many pixels of where it went down is a click, not a drag.
 export const CLICK_THRESHOLD = 4;
+// A finger wobbles more than a mouse pointer, so a tap may move this far.
+export const TOUCH_THRESHOLD = 10;
+// A finger also covers more than a mouse pointer: a tap that hits nothing looks this many pixels
+// to each side, above and below it.
+export const TOUCH_REACH = 14;
 // Momentum: below this speed it stops, and each frame it keeps this fraction of its speed.
 export const MOMENTUM_MIN = 0.02;
 export const MOMENTUM_KEEP = 0.92;
@@ -75,6 +80,19 @@ export function createControls({
     const hits = raycaster.intersectObjects(getModel().hitMeshes, false);
     return hits.length ? hits[0].object.userData : null;
   }
+  function pickNear(cx, cy) {
+    for (const [dx, dy] of [
+      [0, 0],
+      [TOUCH_REACH, 0],
+      [-TOUCH_REACH, 0],
+      [0, TOUCH_REACH],
+      [0, -TOUCH_REACH],
+    ]) {
+      const h = pick(cx + dx, cy + dy);
+      if (h) return h;
+    }
+    return null;
+  }
 
   canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -88,6 +106,7 @@ export function createControls({
         sx: e.clientX,
         sy: e.clientY,
         moved: false,
+        slop: e.pointerType === 'touch' ? TOUCH_THRESHOLD : CLICK_THRESHOLD,
         t: performance.now(),
         pan: e.button === 2 || e.shiftKey || state.get().dragTool === 'pan',
       };
@@ -118,7 +137,7 @@ export function createControls({
     if (drag) {
       const dx = e.clientX - drag.x,
         dy = e.clientY - drag.y;
-      if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > CLICK_THRESHOLD) {
+      if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > drag.slop) {
         drag.moved = true;
         canvas.classList.add('grabbing');
       }
@@ -154,7 +173,8 @@ export function createControls({
   const endPointer = (e) => {
     pointers.delete(e.pointerId);
     if (drag && !drag.moved && pointers.size === 0 && e.button !== 2) {
-      const h = pick(e.clientX, e.clientY);
+      const h =
+        e.pointerType === 'touch' ? pickNear(e.clientX, e.clientY) : pick(e.clientX, e.clientY);
       if (h) state.toggleEdge(h.k);
     }
     if (pointers.size < 2) {

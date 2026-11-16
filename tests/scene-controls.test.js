@@ -11,6 +11,8 @@ import {
   MOMENTUM_KEEP,
   MOMENTUM_MIN,
   ROTATE_PER_PX,
+  TOUCH_REACH,
+  TOUCH_THRESHOLD,
   createControls,
   worldPerPx,
 } from '../src/scene/controls.js';
@@ -222,6 +224,65 @@ describe('click to select', () => {
     const t = setup();
     t.down({ clientX: 500, clientY: 400, pointerId: 7 });
     expect(t.canvas.setPointerCapture).toHaveBeenCalledWith(7);
+  });
+});
+
+describe('a finger is not a mouse pointer', () => {
+  const touch = (o) => ({ pointerType: 'touch', ...o });
+
+  it('the constants', () => {
+    expect(TOUCH_THRESHOLD).toBe(10);
+    expect(TOUCH_REACH).toBe(14);
+  });
+
+  it('a tap that wobbles by up to 10 px still selects the line and does not rotate', () => {
+    const t = setup();
+    const p = t.mid('A', 'B');
+    const before = t.world.quaternion.clone();
+    t.down(touch({ clientX: p.x, clientY: p.y }));
+    t.move(touch({ clientX: p.x + 7, clientY: p.y + 6 })); // hypot 9.2
+    t.up(touch({ clientX: p.x + 7, clientY: p.y + 6 }));
+    expect([...t.state.get().hiEdges]).toEqual(['AB']);
+    expect(t.world.quaternion.equals(before)).toBe(true);
+    expect(t.canvas.classList.contains('grabbing')).toBe(false);
+  });
+
+  it('more than 10 px is a drag for a finger too: it rotates and selects nothing', () => {
+    const t = setup();
+    const p = t.mid('A', 'B');
+    t.down(touch({ clientX: p.x, clientY: p.y }));
+    t.move(touch({ clientX: p.x + 11, clientY: p.y }));
+    expect(t.canvas.classList.contains('grabbing')).toBe(true);
+    t.up(touch({ clientX: p.x + 11, clientY: p.y }));
+    expect(t.state.get().hiEdges.size).toBe(0);
+  });
+
+  it('the same wobble is a drag for a mouse', () => {
+    const t = setup();
+    const p = t.mid('A', 'B');
+    t.down({ clientX: p.x, clientY: p.y });
+    t.move({ clientX: p.x + 7, clientY: p.y + 6 });
+    expect(t.canvas.classList.contains('grabbing')).toBe(true);
+  });
+
+  it('a tap just off a line, where a mouse click finds nothing, looks round the finger and selects it', () => {
+    const t = setup();
+    const p = t.mid('A', 'B');
+    const off = { clientX: p.x, clientY: p.y + 20 }; // below the front bottom edge, beyond the fat tube
+    t.down(off);
+    t.up(off);
+    expect(t.state.get().hiEdges.size).toBe(0);
+    t.down(touch(off));
+    t.up(touch(off));
+    expect([...t.state.get().hiEdges]).toEqual(['AB']);
+  });
+
+  it('a tap far from every line still selects nothing', () => {
+    const t = setup();
+    const far = { clientX: RECT.left + 5, clientY: RECT.top + 5 };
+    t.down(touch(far));
+    t.up(touch(far));
+    expect(t.state.get().hiEdges.size).toBe(0);
   });
 });
 

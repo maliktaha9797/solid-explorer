@@ -6,7 +6,7 @@
 .work.collapsed .panel { border-left-color: transparent; }
 .tabs { display: flex; border-bottom: 1px solid var(--line); padding: 0 8px; flex: none; }
 .tab {
-  flex: 1; height: 44px; border: 0; background: none; color: var(--ink-3); font-weight: 700; font-size: 13px;
+  flex: 1; height: 44px; border: 0; background: none; color: var(--ink-3); font-weight: 700; font-size: 13px; white-space: nowrap;
   border-bottom: 2px solid transparent; margin-bottom: -1px;
 }
 .tab:hover { color: var(--ink-2); }
@@ -89,6 +89,22 @@ select.mini {
 .hid { color: var(--ink-3); font-weight: 800; background: var(--surface-3); border-radius: 4px; padding: 0 9px; }
 .mono { font-variant-numeric: tabular-nums; }
 
-@media (max-width: 860px) {
+@media (max-width: 860px) and (min-height: 521px) {
   .panel { border-left: 0; border-top: 1px solid var(--line); }
+}
+/* Touch screens: bigger targets, and a text size of 16 px or more so iOS does not zoom in on a field. */
+@media (pointer: coarse) {
+  .tab { height: 48px; }
+  .field input { height: 44px; font-size: 16px; }
+  .field .unit { height: 44px; }
+  .names .field input { height: 44px; }
+  select.mini { height: 40px; font-size: 16px; }
+  /* the Define by list wraps under its label when the panel is narrow, instead of cutting its text off (the markup sets min-width: 0 inline) */
+  #modeSel { min-width: 13rem !important; }
+  .ghost { height: 40px; font-size: 13.5px; }
+  .chip { height: 38px; }
+  .switch { padding: 12px 0; }
+  .switch input { width: 46px; height: 28px; }
+  .switch input::after { top: 3px; left: 3px; width: 22px; height: 22px; }
+  .switch input:checked::after { transform: translateX(18px); }
 }

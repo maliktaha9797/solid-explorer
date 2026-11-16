@@ -5,9 +5,11 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
+  FOV,
   GIZMO_PAD,
   GIZMO_SIZE,
   STATUS_BAR,
+  fovFor,
   gizmoViewport,
   mainViewport,
 } from '../src/scene/layout.js';
@@ -31,6 +33,32 @@ describe('the viewports are in CSS pixels', () => {
       expect(y).toBe(STATUS_BAR + GIZMO_PAD);
       expect(gh).toBe(gw);
     }
+  });
+});
+
+describe('the lens follows the shape of the stage', () => {
+  const tanHalf = (deg) => Math.tan((deg / 2) * (Math.PI / 180));
+
+  it('is 36 degrees on a stage that is as wide as it is tall, or wider', () => {
+    expect(FOV).toBe(36);
+    for (const aspect of [1, 1.13, 1.6, 2.5, 4]) expect(fovFor(aspect)).toBe(36);
+  });
+
+  it('is wider on a tall stage, so the solid is not cut off at the sides', () => {
+    for (const aspect of [0.9, 0.7, 0.53, 0.3]) {
+      expect(fovFor(aspect)).toBeGreaterThan(36);
+      expect(fovFor(aspect)).toBeLessThan(180);
+      // the width it shows is the width it shows at an aspect ratio of 1
+      expect(tanHalf(fovFor(aspect)) * aspect).toBeCloseTo(tanHalf(36), 10);
+    }
+  });
+
+  it('changes smoothly at an aspect ratio of 1', () => {
+    expect(fovFor(0.999)).toBeCloseTo(36, 1);
+  });
+
+  it('keeps to 36 for a stage with no size yet', () => {
+    for (const aspect of [0, NaN, -1, undefined]) expect(fovFor(aspect)).toBe(36);
   });
 });
 
