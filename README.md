@@ -48,8 +48,13 @@ Open the address it prints. `npm run build` makes the single file, at `dist/inde
 - **20 right-angled triangles** across the seven solids. Pick one and it is shaded inside the solid, with the right angle marked and the angle you are finding labelled θ. The **Working** tab flattens it and shows the steps: Pythagoras for the side, then the angle with tan⁻¹, then a check with sin and cos.
 - **Hide answers for practice.** Every answer in the working becomes a `?`, including the ones inside √ and tan⁻¹. Students do the sum, then you switch it off to check.
 - **Views and controls:** Iso, Front, Top and Right views. Rotate with a spin that carries on after a flick, move, and zoom by mouse, keyboard or touch.
+- **Phones and tablets.** The toolbar fits the screen, and the panel is a sheet under the 3D view that you can fold away. Held sideways, a phone keeps the panel beside the solid. One finger turns the solid, two fingers move and zoom it, and a tap picks a line.
 - **Light and dark.** It follows your device until you choose, and remembers your choice.
 - **It remembers** the shape, the units, the theme and whether the panel is open. It does not save the numbers you type, so a reload starts from the defaults.
+
+<p align="center">
+  <img src="docs/screenshots/phone.png" alt="Solid Explorer on a phone held upright: the toolbar on two rows, the cuboid with the triangle ACG shaded, and the working for the triangle in the panel below" width="300">
+</p>
 
 ## For teachers
 
@@ -86,12 +91,11 @@ Be clear about this before you rely on it in a lesson.
 
 - **Tested:** Chrome on a Mac, at desktop width and at 390 pixels wide, both on the development server and on the single `index.html` opened from disk. The tests were run by scripts, with the 3D drawn by software rather than a graphics card. Versions 1.0.0 and 1.0.1 were only checked on a normal display, and a Retina screen (a pixel ratio of 2) showed the 3D view twice as big and out of place. That is fixed from 1.0.2. The scripts now check both a pixel ratio of 1 and of 2, using Chrome's emulation of a 2x display. Version 1.0.2 was also opened on a real 2x display with a real graphics card (the browser pane of a desktop app, on a Mac with an Apple M4 Pro chip). There the solid lined up with its labels, the axis arrows showed, and the zoom stayed put when the theme changed. That was a short look, not a run of the whole checklist. The behaviour was checked item by item against the original single-file prototype that this project was made from, except where the changelog says it was changed. The checklist is in [`docs/parity-checklist.md`](docs/parity-checklist.md). The record of that run is kept by the maintainer and is not in this repository.
 - **Not tested:** Safari and Firefox. They may well work, but nobody has checked.
-- **Touch** was tested with emulated touch events only, not on a real phone or tablet.
+- **Touch and phones** were tested with emulated touch events on phone-sized screens in Chrome, 320, 360, 390 and 430 pixels wide, upright and held sideways, and on a tablet. They were not tested on a real phone or tablet, and Safari on an iPhone has not been tried.
 - **The maths** has automatic tests: every shape, every Define by mode, the triangle solver and the number formatting.
 
 ## Known limits
 
-- On a screen about the width of a phone, the toolbar runs off the right edge, so the page is wider than the screen. The original prototype did the same. The side panel does become a sheet at the bottom.
 - Typing a new size or choosing another shape puts the zoom back to the starting distance. Your rotation stays, and so does your zoom when you do anything else.
 - The keyboard shortcuts do not look for `Ctrl` or `Cmd`, so `Ctrl+R` (reload) also resets the view.
 

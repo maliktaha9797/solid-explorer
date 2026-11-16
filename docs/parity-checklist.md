@@ -11,7 +11,7 @@ Run each item your change could affect on **both** builds:
 - the development server (`npm run dev`), and
 - the single file, `dist/index.html`, opened from your disk by double-clicking it (`npm run build` makes it).
 
-Do it at desktop width and at 390 pixels wide. For anything in the 3D view, also do it on a display with a pixel ratio of 2: on a Retina Mac, or in Chrome's DevTools with the device pixel ratio set to 2. Open `reference/solid-explorer.html` beside it when you want to compare, remembering that the changelog lists where this version differs on purpose.
+Do it at desktop width and on a phone: 390 pixels wide held upright, and 844 pixels wide held sideways (in Chrome's DevTools, choose a phone and turn it). For anything in the 3D view, also do it on a display with a pixel ratio of 2: on a Retina Mac, or in Chrome's DevTools with the device pixel ratio set to 2. Open `reference/solid-explorer.html` beside it when you want to compare, remembering that the changelog lists where this version differs on purpose.
 
 An item is green only if you saw it working. "Not run" is a fair answer. Write it down instead of ticking the box. The releases so far were checked in Chrome only, with emulated touch, and from 1.0.2 on a pixel ratio of 1 and an emulated pixel ratio of 2, with a short look at a real 2x display and graphics card. Safari, Firefox, real touch devices and a full run of this list on a real Retina screen have not been done, so a report from any of them is welcome.
 
@@ -58,7 +58,7 @@ If you find a behaviour that is not on this list and matters, add it here in the
 - [ ] The arrow on the edge handle points at the edge when the panel is open and out into the page when it is closed. On a phone-width screen it points down when the sheet is open and up when it is closed
 - [ ] The theme toggle works, follows the device when nothing is saved, and is remembered
 - [ ] The shape and unit are remembered
-- [ ] On a phone-width screen the panel becomes a sheet at the bottom, its handle moves to the top edge, and the legend and key hints are hidden
+- [ ] On a phone held upright the panel becomes a sheet at the bottom, its handle moves to the top edge, and the legend and key hints are hidden. Held sideways, the panel stays beside the 3D view
 - [ ] The single file makes no network requests (check the Network tab in DevTools)
 - [ ] There are no console errors
 
@@ -99,9 +99,23 @@ If you find a behaviour that is not on this list and matters, add it here in the
 - [ ] Odd saved values for the unit, panel and theme behave as in the prototype, which is a kept quirk: an unknown unit leaves the unit select blank, a saved panel value that is not a boolean leaves the panel open, and an unknown theme name is copied to `data-theme`
 - [ ] Collapsing the panel by any route (toolbar button, edge handle, `]`, `[`) writes `se:panel`, reopening writes it again, and a click on a tab while the panel is collapsed reopens it
 - [ ] The console shows no message of any level in the single file. The prototype logs a `THREE.Quaternion: Static .slerp()` deprecation warning on every frame of a view animation, and this version must not
-- [ ] At 390 pixels wide the page is 927 pixels wide, the toolbar runs off the right edge, and the edge handle sits at x = 427, outside the view. That is how the prototype behaves, so this version matches it until a fix is agreed
 - [ ] The toolbar view buttons, Reset and the zoom buttons move the camera in the real app. They reach the scene through closures in `main.js`, so check them on the real page, not on a test harness
 - [ ] No leaks: the geometry and texture counts return to the same values on every revisit of a shape, 200 input events add none, and a 3-second rotate notifies subscribers once. The app does not expose its renderer, so this needs a throwaway hook that reads the counts
+
+## Phones and small screens
+
+Run these on a phone, or in Chrome's DevTools with a phone chosen (with touch on). Desktop widths, above 960 pixels, look as they always did.
+
+- [ ] At 390 pixels wide the page is exactly 390 pixels wide. Nothing runs off the right edge, and the page does not scroll sideways, even when you drag across the 3D view
+- [ ] The toolbar is on two rows: the shape, Clear, the theme and the panel on the first, and the view, rotate and pan, and zoom buttons on the second. At 360 wide everything still fits in those two rows, and at 320 wide the rotate and pan buttons go so that it does
+- [ ] Held sideways (844 by 390), the toolbar is one row and the panel stays beside the 3D view
+- [ ] On a tablet (768 wide) the toolbar is one row and the panel is a sheet under the 3D view
+- [ ] The sheet's handle folds it away and brings it back, and with it folded away the whole solid is still in view
+- [ ] The tabs fit on one line each, even with the badge on Triangles, and the Define by list wraps under its label when the panel is narrow
+- [ ] Buttons are at least 32 pixels wide and 40 high, tabs 48 high and number fields 44 high, and every field uses a text size of 16 pixels, so iOS does not zoom into the page when one is tapped
+- [ ] One finger turns the solid. Two fingers pinch to zoom and move it. A tap on or a little way from a line selects it, even if the finger moves up to 10 pixels. A tap on empty space selects nothing
+- [ ] On a phone with a notch or a home bar nothing is hidden under them
+- [ ] The status bar is one line, and the Working tab's triangle fits the width of the sheet
 
 ## Common mistakes
 

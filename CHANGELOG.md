@@ -7,6 +7,28 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Phones and small screens.** On a phone the toolbar ran off the right edge. That made the whole
+  page wider than the screen (927 pixels on a 390 pixel phone), so most of the 3D view and the
+  panel were out of sight. The prototype did the same. Now:
+  - the toolbar wraps onto two rows (three on the very smallest screens) and never runs off the
+    edge, at any width up to 960 pixels;
+  - the panel is a sheet under the 3D view that follows the real height of the screen, and with it
+    folded away the whole solid is still in view, because the lens widens on a tall screen;
+  - a phone held sideways keeps the panel beside the 3D view, with the toolbar on one row;
+  - buttons, tabs, fields and switches are bigger on a touch screen, and every field uses a text
+    size of 16 pixels, so an iPhone does not zoom into the page when you tap one;
+  - a tap may move up to 10 pixels and still be a tap, and it looks 14 pixels round itself for a
+    line, so a finger can select one;
+  - the page keeps clear of a notch and the home bar, asks Android to shrink it when the keyboard
+    opens, and the status bar stays on one line.
+
+### Changed
+
+- **Windows between 861 and 960 pixels wide** now get the compact toolbar (without the words on
+  Rotate, Pan and Clear), where the toolbar used to run off the edge.
+
 ## [1.0.2] - 2026-11-04
 
 ### Fixed
