@@ -7,6 +7,8 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-11-16
+
 ### Fixed
 
 - **Phones and small screens.** On a phone the toolbar ran off the right edge. That made the whole
